@@ -1,0 +1,775 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>SYN4PSE · Panel</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      :root {
+        --fondo: #07080d;
+        --panel: rgba(255, 255, 255, 0.04);
+        --borde: rgba(255, 255, 255, 0.1);
+        --texto: #f4f4f5;
+        --suave: rgba(255, 255, 255, 0.55);
+        --tenue: rgba(255, 255, 255, 0.32);
+        --azul: #6366f1;
+        --verde: #10b981;
+        --rojo: #f43f5e;
+        --ambar: #f59e0b;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--fondo);
+        color: var(--texto);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        letter-spacing: -0.011em;
+      }
+      body::before {
+        content: '';
+        position: fixed;
+        inset: -30%;
+        z-index: 0;
+        filter: blur(90px);
+        opacity: 0.5;
+        background:
+          radial-gradient(40% 40% at 20% 20%, #3d46e8 0%, transparent 70%),
+          radial-gradient(35% 35% at 80% 10%, #b18cff 0%, transparent 70%);
+        pointer-events: none;
+      }
+      .envoltura {
+        position: relative;
+        z-index: 1;
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 28px 20px 60px;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 26px;
+      }
+      .marca {
+        font-family: ui-monospace, 'Consolas', monospace;
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+      }
+      .marca span {
+        color: var(--tenue);
+        font-weight: 400;
+      }
+      .cuenta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 12px;
+        color: var(--suave);
+      }
+
+      button {
+        font: inherit;
+        cursor: pointer;
+        border-radius: 999px;
+        border: 1px solid var(--borde);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--texto);
+        padding: 8px 16px;
+        font-size: 13px;
+        transition: all 0.2s;
+      }
+      button:hover:not(:disabled) {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.28);
+      }
+      button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .primario {
+        background: linear-gradient(to right, #4f46e5, #7c3aed);
+        border-color: transparent;
+        font-weight: 600;
+        box-shadow: 0 6px 18px rgba(79, 70, 229, 0.3);
+      }
+      .primario:hover:not(:disabled) {
+        filter: brightness(1.12);
+        background: linear-gradient(to right, #4f46e5, #7c3aed);
+      }
+      .mini {
+        padding: 5px 11px;
+        font-size: 11.5px;
+      }
+      .peligro:hover:not(:disabled) {
+        border-color: rgba(244, 63, 94, 0.5);
+        background: rgba(244, 63, 94, 0.14);
+        color: #fda4af;
+      }
+
+      .tarjeta {
+        border: 1px solid var(--borde);
+        background: var(--panel);
+        backdrop-filter: blur(22px);
+        border-radius: 20px;
+        padding: 22px;
+        margin-bottom: 20px;
+      }
+      .tarjeta h2 {
+        margin: 0 0 4px;
+        font-size: 15px;
+        font-weight: 600;
+      }
+      .sub {
+        margin: 0 0 18px;
+        font-size: 12.5px;
+        color: var(--tenue);
+      }
+
+      label {
+        display: block;
+        font-size: 11.5px;
+        color: var(--suave);
+        margin-bottom: 6px;
+      }
+      input,
+      select,
+      textarea {
+        font: inherit;
+        width: 100%;
+        padding: 9px 12px;
+        font-size: 13px;
+        color: var(--texto);
+        background: rgba(0, 0, 0, 0.35);
+        border: 1px solid var(--borde);
+        border-radius: 12px;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: rgba(255, 255, 255, 0.4);
+      }
+      .rejilla {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        align-items: end;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      th {
+        text-align: left;
+        font-size: 10.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--tenue);
+        font-weight: 500;
+        padding: 0 10px 9px 0;
+        border-bottom: 1px solid var(--borde);
+      }
+      td {
+        padding: 11px 10px 11px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        vertical-align: middle;
+      }
+      tr:hover td {
+        background: rgba(255, 255, 255, 0.025);
+      }
+      .clave {
+        font-family: ui-monospace, 'Consolas', monospace;
+        font-size: 12.5px;
+        letter-spacing: 0.04em;
+      }
+      .acciones {
+        display: flex;
+        gap: 6px;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+      }
+
+      .etiqueta {
+        display: inline-block;
+        padding: 3px 9px;
+        border-radius: 999px;
+        font-size: 10.5px;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+      .ok {
+        background: rgba(16, 185, 129, 0.16);
+        color: #6ee7b7;
+      }
+      .no {
+        background: rgba(244, 63, 94, 0.16);
+        color: #fda4af;
+      }
+      .av {
+        background: rgba(245, 158, 11, 0.16);
+        color: #fcd34d;
+      }
+      .neutro {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--suave);
+      }
+
+      .vacio {
+        text-align: center;
+        color: var(--tenue);
+        font-size: 12.5px;
+        padding: 26px 0;
+      }
+      .oculto {
+        display: none !important;
+      }
+
+      #entrada {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+      }
+      #entrada .tarjeta {
+        text-align: center;
+        max-width: 380px;
+        padding: 40px 34px;
+      }
+
+      #aviso {
+        position: fixed;
+        left: 50%;
+        bottom: 24px;
+        transform: translateX(-50%) translateY(120%);
+        z-index: 20;
+        padding: 11px 20px;
+        border-radius: 999px;
+        font-size: 13px;
+        background: rgba(8, 10, 18, 0.94);
+        border: 1px solid var(--borde);
+        backdrop-filter: blur(12px);
+        transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+      }
+      #aviso.visible {
+        transform: translateX(-50%) translateY(0);
+      }
+      #aviso.error {
+        border-color: rgba(244, 63, 94, 0.45);
+        color: #fda4af;
+      }
+      #aviso.exito {
+        border-color: rgba(16, 185, 129, 0.45);
+        color: #6ee7b7;
+      }
+
+      .pestanas {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 18px;
+      }
+      .pestanas button.activa {
+        background: rgba(255, 255, 255, 0.14);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Pantalla de entrada -->
+    <div id="entrada">
+      <div class="tarjeta">
+        <div class="marca" style="margin-bottom: 8px">SYN4PSE <span>· PANEL</span></div>
+        <p class="sub" style="margin-bottom: 24px">Administración de licencias y contenidos</p>
+        <button class="primario" id="btnEntrar" style="width: 100%">Entrar con Google</button>
+        <p id="errorEntrada" class="sub oculto" style="margin: 16px 0 0; color: #fda4af"></p>
+      </div>
+    </div>
+
+    <!-- Panel -->
+    <div class="envoltura oculto" id="panel">
+      <header>
+        <div class="marca">SYN4PSE <span>· PANEL</span></div>
+        <div class="cuenta">
+          <span id="correo"></span>
+          <button class="mini" id="btnSalir">Salir</button>
+        </div>
+      </header>
+
+      <div class="pestanas">
+        <button class="activa" data-vista="licencias">Licencias</button>
+        <button data-vista="frases">Frases del día</button>
+        <button data-vista="ajustes">Aviso global</button>
+      </div>
+
+      <!-- LICENCIAS -->
+      <section data-panel="licencias">
+        <div class="tarjeta">
+          <h2>Generar licencia</h2>
+          <p class="sub">La clave se crea sola. El equipo se queda fijado en la primera activación.</p>
+          <div class="rejilla">
+            <div>
+              <label for="nCliente">Cliente</label>
+              <input id="nCliente" placeholder="Nombre o empresa" />
+            </div>
+            <div>
+              <label for="nMeses">Vigencia</label>
+              <select id="nMeses">
+                <option value="0">Sin vencimiento</option>
+                <option value="1">1 mes</option>
+                <option value="3">3 meses</option>
+                <option value="6">6 meses</option>
+                <option value="12" selected>12 meses</option>
+              </select>
+            </div>
+            <div>
+              <button class="primario" id="btnCrear" style="width: 100%">Crear licencia</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="tarjeta">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+            <div>
+              <h2>Licencias</h2>
+              <p class="sub" style="margin-bottom: 0" id="resumenLic">Cargando...</p>
+            </div>
+            <input id="buscar" placeholder="Buscar..." style="max-width: 220px" />
+          </div>
+          <div style="overflow-x: auto; margin-top: 16px">
+            <table>
+              <thead>
+                <tr>
+                  <th>Clave</th>
+                  <th>Cliente</th>
+                  <th>Estado</th>
+                  <th>Equipo</th>
+                  <th>Vence</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tablaLic"></tbody>
+            </table>
+          </div>
+          <p class="vacio oculto" id="sinLic">No hay licencias todavía.</p>
+        </div>
+      </section>
+
+      <!-- FRASES -->
+      <section data-panel="frases" class="oculto">
+        <div class="tarjeta">
+          <h2>Nueva frase</h2>
+          <p class="sub">Se muestra una distinta cada día, la misma para todos los clientes.</p>
+          <div style="display: grid; gap: 12px">
+            <div>
+              <label for="nTexto">Frase</label>
+              <textarea id="nTexto" rows="2" placeholder="Escribe la frase..."></textarea>
+            </div>
+            <div class="rejilla">
+              <div>
+                <label for="nAutor">Autor (opcional)</label>
+                <input id="nAutor" placeholder="SYN4PSE" />
+              </div>
+              <div>
+                <button class="primario" id="btnFrase" style="width: 100%">Añadir frase</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tarjeta">
+          <h2>Frases</h2>
+          <p class="sub" id="resumenFra">Cargando...</p>
+          <div style="overflow-x: auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>Frase</th>
+                  <th>Autor</th>
+                  <th>Estado</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tablaFra"></tbody>
+            </table>
+          </div>
+          <p class="vacio oculto" id="sinFra">No hay frases todavía.</p>
+        </div>
+      </section>
+
+      <!-- AJUSTES -->
+      <section data-panel="ajustes" class="oculto">
+        <div class="tarjeta">
+          <h2>Aviso global</h2>
+          <p class="sub">
+            Si escribes algo aquí, todos los clientes lo verán al abrir el programa y no podrán
+            iniciar sesión. Déjalo vacío para el funcionamiento normal.
+          </p>
+          <textarea id="txtAviso" rows="3" placeholder="Vacío = todo normal"></textarea>
+          <div style="display: flex; gap: 8px; margin-top: 14px">
+            <button class="primario" id="btnAviso">Guardar aviso</button>
+            <button id="btnLimpiarAviso">Vaciar</button>
+          </div>
+        </div>
+
+        <div class="tarjeta">
+          <h2>Identificador de Microsoft</h2>
+          <p class="sub">
+            Solo hay que tocarlo si cambias el registro de la aplicación en Azure. Recuerda
+            actualizar también el archivo config.json del repositorio.
+          </p>
+          <input id="txtClientId" />
+          <button class="primario" id="btnClientId" style="margin-top: 14px">Guardar</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="aviso"></div>
+
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js'
+      import {
+        getAuth,
+        GoogleAuthProvider,
+        signInWithPopup,
+        onAuthStateChanged,
+        signOut
+      } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js'
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+        getDoc,
+        doc,
+        setDoc,
+        updateDoc,
+        deleteDoc,
+        serverTimestamp,
+        Timestamp
+      } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js'
+
+      const app = initializeApp({
+        apiKey: 'AIzaSyA5ewWQSJDfjshuk2qvWQlSVVotn56S7Dg',
+        authDomain: 'ficpysite.firebaseapp.com',
+        projectId: 'ficpysite',
+        storageBucket: 'ficpysite.firebasestorage.app',
+        messagingSenderId: '204371570076',
+        appId: '1:204371570076:web:2d3d33e8ffe5fc0a506c59'
+      })
+      const auth = getAuth(app)
+      const db = getFirestore(app)
+
+      const $ = (id) => document.getElementById(id)
+      let licencias = []
+      let frases = []
+
+      function avisar(texto, tipo = '') {
+        const caja = $('aviso')
+        caja.textContent = texto
+        caja.className = 'visible ' + tipo
+        clearTimeout(avisar.t)
+        avisar.t = setTimeout(() => (caja.className = tipo), 3400)
+      }
+
+      function fallo(error) {
+        console.error(error)
+        const permisos = String(error?.code ?? '').includes('permission-denied')
+        avisar(
+          permisos
+            ? 'Sin permisos: revisa que tu correo esté en las reglas de Firestore.'
+            : 'Error: ' + (error?.message ?? error),
+          'error'
+        )
+      }
+
+      // --- Sesión ---------------------------------------------------------
+      $('btnEntrar').onclick = async () => {
+        try {
+          await signInWithPopup(auth, new GoogleAuthProvider())
+        } catch (e) {
+          $('errorEntrada').textContent = 'No se pudo entrar: ' + e.message
+          $('errorEntrada').classList.remove('oculto')
+        }
+      }
+      $('btnSalir').onclick = () => signOut(auth)
+
+      onAuthStateChanged(auth, (usuario) => {
+        if (usuario) {
+          $('entrada').classList.add('oculto')
+          $('panel').classList.remove('oculto')
+          $('correo').textContent = usuario.email
+          cargarTodo()
+        } else {
+          $('entrada').classList.remove('oculto')
+          $('panel').classList.add('oculto')
+        }
+      })
+
+      // --- Pestañas -------------------------------------------------------
+      document.querySelectorAll('.pestanas button').forEach((b) => {
+        b.onclick = () => {
+          document.querySelectorAll('.pestanas button').forEach((o) => o.classList.remove('activa'))
+          b.classList.add('activa')
+          document
+            .querySelectorAll('[data-panel]')
+            .forEach((s) => s.classList.toggle('oculto', s.dataset.panel !== b.dataset.vista))
+        }
+      })
+
+      // --- Utilidades -----------------------------------------------------
+      const ALFABETO = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789' // sin O/0 ni I/1
+
+      function generarClave() {
+        const azar = crypto.getRandomValues(new Uint32Array(16))
+        let salida = ''
+        for (let i = 0; i < 16; i++) {
+          if (i > 0 && i % 4 === 0) salida += '-'
+          salida += ALFABETO[azar[i] % ALFABETO.length]
+        }
+        return salida
+      }
+
+      const fecha = (t) => (t?.toDate ? t.toDate().toLocaleDateString('es') : null)
+
+      function escapar(t) {
+        return String(t ?? '').replace(
+          /[&<>"']/g,
+          (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]
+        )
+      }
+
+      // --- Licencias ------------------------------------------------------
+      async function cargarLicencias() {
+        const snap = await getDocs(collection(db, 'licencias'))
+        licencias = snap.docs
+          .map((d) => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => (b.creada?.seconds ?? 0) - (a.creada?.seconds ?? 0))
+        pintarLicencias()
+      }
+
+      function pintarLicencias() {
+        const filtro = $('buscar').value.trim().toUpperCase()
+        const lista = filtro
+          ? licencias.filter(
+              (l) =>
+                l.id.includes(filtro) || String(l.cliente ?? '').toUpperCase().includes(filtro)
+            )
+          : licencias
+
+        const activas = licencias.filter((l) => l.activa).length
+        const usadas = licencias.filter((l) => l.hwid).length
+        $('resumenLic').textContent =
+          `${licencias.length} en total · ${activas} activas · ${usadas} en uso`
+
+        $('sinLic').classList.toggle('oculto', lista.length > 0)
+        $('tablaLic').innerHTML = lista
+          .map((l) => {
+            const vence = fecha(l.expira)
+            const vencida = l.expira?.toDate && l.expira.toDate() < new Date()
+            const estado = !l.activa
+              ? '<span class="etiqueta no">Desactivada</span>'
+              : vencida
+                ? '<span class="etiqueta av">Vencida</span>'
+                : '<span class="etiqueta ok">Activa</span>'
+            const equipo = l.hwid
+              ? `<span class="etiqueta neutro" title="${escapar(l.hwid)}">${escapar(l.hwid.slice(0, 10))}…</span>`
+              : '<span class="etiqueta neutro">Sin usar</span>'
+            return `<tr>
+              <td class="clave">${escapar(l.id)}</td>
+              <td>${escapar(l.cliente || '—')}</td>
+              <td>${estado}</td>
+              <td>${equipo}</td>
+              <td style="color:var(--suave)">${vence ?? 'Perpetua'}</td>
+              <td><div class="acciones">
+                <button class="mini" data-copiar="${escapar(l.id)}">Copiar</button>
+                <button class="mini" data-liberar="${escapar(l.id)}" ${l.hwid ? '' : 'disabled'}>Liberar</button>
+                <button class="mini" data-alternar="${escapar(l.id)}">${l.activa ? 'Desactivar' : 'Activar'}</button>
+                <button class="mini peligro" data-borrar="${escapar(l.id)}">Borrar</button>
+              </div></td>
+            </tr>`
+          })
+          .join('')
+      }
+
+      $('buscar').oninput = pintarLicencias
+
+      $('btnCrear').onclick = async () => {
+        const cliente = $('nCliente').value.trim()
+        if (!cliente) return avisar('Escribe el nombre del cliente.', 'error')
+
+        const meses = Number($('nMeses').value)
+        let expira = null
+        if (meses > 0) {
+          const d = new Date()
+          d.setMonth(d.getMonth() + meses)
+          expira = Timestamp.fromDate(d)
+        }
+
+        const clave = generarClave()
+        try {
+          await setDoc(doc(db, 'licencias', clave), {
+            activa: true,
+            cliente,
+            hwid: '',
+            expira,
+            creada: serverTimestamp()
+          })
+          await navigator.clipboard.writeText(clave).catch(() => {})
+          $('nCliente').value = ''
+          avisar(`Licencia ${clave} creada y copiada al portapapeles.`, 'exito')
+          cargarLicencias()
+        } catch (e) {
+          fallo(e)
+        }
+      }
+
+      document.addEventListener('click', async (ev) => {
+        const b = ev.target.closest('button')
+        if (!b) return
+        try {
+          if (b.dataset.copiar) {
+            await navigator.clipboard.writeText(b.dataset.copiar)
+            avisar('Clave copiada.', 'exito')
+          } else if (b.dataset.liberar) {
+            if (!confirm(`¿Liberar el equipo de ${b.dataset.liberar}?\n\nPodrá activarse en otra computadora.`)) return
+            await updateDoc(doc(db, 'licencias', b.dataset.liberar), { hwid: '' })
+            avisar('Equipo liberado.', 'exito')
+            cargarLicencias()
+          } else if (b.dataset.alternar) {
+            const l = licencias.find((x) => x.id === b.dataset.alternar)
+            await updateDoc(doc(db, 'licencias', l.id), { activa: !l.activa })
+            avisar(l.activa ? 'Licencia desactivada.' : 'Licencia activada.', 'exito')
+            cargarLicencias()
+          } else if (b.dataset.borrar) {
+            if (!confirm(`¿Borrar ${b.dataset.borrar} definitivamente?\n\nEl cliente perderá el acceso.`)) return
+            await deleteDoc(doc(db, 'licencias', b.dataset.borrar))
+            avisar('Licencia borrada.', 'exito')
+            cargarLicencias()
+          } else if (b.dataset.fraseAlternar) {
+            const f = frases.find((x) => x.id === b.dataset.fraseAlternar)
+            await updateDoc(doc(db, 'frases', f.id), { activa: !f.activa })
+            cargarFrases()
+          } else if (b.dataset.fraseBorrar) {
+            if (!confirm('¿Borrar esta frase?')) return
+            await deleteDoc(doc(db, 'frases', b.dataset.fraseBorrar))
+            avisar('Frase borrada.', 'exito')
+            cargarFrases()
+          }
+        } catch (e) {
+          fallo(e)
+        }
+      })
+
+      // --- Frases ---------------------------------------------------------
+      async function cargarFrases() {
+        const snap = await getDocs(collection(db, 'frases'))
+        frases = snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => a.id.localeCompare(b.id))
+
+        const activas = frases.filter((f) => f.activa).length
+        $('resumenFra').textContent =
+          `${frases.length} en total · ${activas} en rotación · el ciclo se repite cada ${activas || 1} día(s)`
+
+        $('sinFra').classList.toggle('oculto', frases.length > 0)
+        $('tablaFra').innerHTML = frases
+          .map(
+            (f) => `<tr>
+              <td style="max-width:460px">${escapar(f.texto)}</td>
+              <td style="color:var(--suave)">${escapar(f.autor || '—')}</td>
+              <td>${f.activa ? '<span class="etiqueta ok">En rotación</span>' : '<span class="etiqueta neutro">Apagada</span>'}</td>
+              <td><div class="acciones">
+                <button class="mini" data-frase-alternar="${escapar(f.id)}">${f.activa ? 'Apagar' : 'Encender'}</button>
+                <button class="mini peligro" data-frase-borrar="${escapar(f.id)}">Borrar</button>
+              </div></td>
+            </tr>`
+          )
+          .join('')
+      }
+
+      $('btnFrase').onclick = async () => {
+        const texto = $('nTexto').value.trim()
+        if (!texto) return avisar('Escribe la frase.', 'error')
+
+        // Identificador correlativo: el orden decide la rotación diaria.
+        const numeros = frases
+          .map((f) => Number(String(f.id).replace(/\D/g, '')))
+          .filter((n) => !Number.isNaN(n))
+        const siguiente = (numeros.length ? Math.max(...numeros) : 0) + 1
+        const id = 'frase-' + String(siguiente).padStart(3, '0')
+
+        try {
+          await setDoc(doc(db, 'frases', id), {
+            texto,
+            autor: $('nAutor').value.trim(),
+            activa: true
+          })
+          $('nTexto').value = ''
+          $('nAutor').value = ''
+          avisar('Frase añadida.', 'exito')
+          cargarFrases()
+        } catch (e) {
+          fallo(e)
+        }
+      }
+
+      // --- Ajustes --------------------------------------------------------
+      async function cargarConfig() {
+        const snap = await getDoc(doc(db, 'config', 'app'))
+        const d = snap.exists() ? snap.data() : {}
+        $('txtAviso').value = d.aviso ?? ''
+        $('txtClientId').value = d.clientId ?? ''
+      }
+
+      $('btnAviso').onclick = async () => {
+        try {
+          await setDoc(doc(db, 'config', 'app'), { aviso: $('txtAviso').value.trim() }, { merge: true })
+          avisar('Aviso guardado. Los clientes lo verán al abrir el programa.', 'exito')
+        } catch (e) {
+          fallo(e)
+        }
+      }
+
+      $('btnLimpiarAviso').onclick = async () => {
+        $('txtAviso').value = ''
+        try {
+          await setDoc(doc(db, 'config', 'app'), { aviso: '' }, { merge: true })
+          avisar('Aviso retirado.', 'exito')
+        } catch (e) {
+          fallo(e)
+        }
+      }
+
+      $('btnClientId').onclick = async () => {
+        const valor = $('txtClientId').value.trim()
+        if (!valor) return avisar('El identificador no puede quedar vacío.', 'error')
+        try {
+          await setDoc(doc(db, 'config', 'app'), { clientId: valor }, { merge: true })
+          avisar('Identificador guardado.', 'exito')
+        } catch (e) {
+          fallo(e)
+        }
+      }
+
+      async function cargarTodo() {
+        try {
+          await Promise.all([cargarLicencias(), cargarFrases(), cargarConfig()])
+        } catch (e) {
+          fallo(e)
+        }
+      }
+    </script>
+  </body>
+</html>
